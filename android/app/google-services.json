@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "689799503252",
+    "project_id": "arhibu-b4c74",
+    "storage_bucket": "arhibu-b4c74.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689799503252:android:cbd92a4a52c4522bfd0381",
+        "android_client_info": {
+          "package_name": "com.example.arhibu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCehickY_zNlTOdbnuyPPD2ber-P2GBYrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689799503252:android:ec6de2d43d53cc12fd0381",
+        "android_client_info": {
+          "package_name": "com.example.arhibu_auth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCehickY_zNlTOdbnuyPPD2ber-P2GBYrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
