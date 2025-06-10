@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:arhibu/global_service/firebase_secrvices.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/listing_model.dart';
@@ -18,7 +19,13 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
 
   @override
   Future<List<ListingModel>> fetchListings() async {
-    final response = await client.get(Uri.parse(baseUrl));
+    final token = await FirebaseServices.getUserToken();
+    final response = await client.get(Uri.parse(baseUrl),headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',
+    });
+    
     // print('Status code: ${response.statusCode}');
     // print('Response body: ${response.body}');
     if (response.statusCode == 200) {
@@ -32,9 +39,12 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
 
   @override
   Future<void> createListing(ListingModel model) async {
+    final token = await FirebaseServices.getUserToken();
     final response = await client.post(
       Uri.parse(baseUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {  'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',},
       body: json.encode(model.toJson()),
     );
     if (response.statusCode != 201) {

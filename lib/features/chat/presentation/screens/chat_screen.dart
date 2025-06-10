@@ -86,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<List<ChatPreview>> getChats() async {
     try {
-      final response = await RequestConfig.secureGet("chats");
+      final response = await RequestConfig.secureGet("/chats");
       final body = response.body;
       print(body);
       final chats = jsonDecode(response.body)['chats'] as List<dynamic>;

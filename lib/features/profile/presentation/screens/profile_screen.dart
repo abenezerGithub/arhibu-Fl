@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void getUserProfile() async {
     try {
       final response = await RequestConfig.secureGet(
-        "user",
+        "/user",
       );
 
       final body = jsonDecode(response.body);

@@ -4,7 +4,7 @@ import 'package:arhibu/global_service/firebase_secrvices.dart';
 import 'package:http/http.dart' as http;
 
 class RequestConfig {
-  static String baseUrl = 'http://192.168.136.5:3000/api/';
+  static String baseUrl = 'https://arhibu-be.onrender.com/api';
 
   static Future<http.Response> securePost(String endpoint, Map body) async {
     final uri = Uri.parse('$baseUrl$endpoint');

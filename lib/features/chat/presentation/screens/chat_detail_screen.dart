@@ -44,7 +44,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if (_messageController.text.trim().isEmpty) return;
 
     try {
-      final postMessage = await RequestConfig.securePost("chat/new", {
+      final postMessage = await RequestConfig.securePost("/chat/new", {
         "message": _messageController.text,
         "receiverUid": widget.otherUserUid,
       });
@@ -72,7 +72,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     // Simulate fetching chats from a database or API
     try {
       print("Fetching chats for chatId: $chatId");
-      final response = await RequestConfig.secureGet("chat/" + chatId);
+      final response = await RequestConfig.secureGet("/chat/" + chatId);
       final body = response.body;
 
       print(response);
@@ -139,8 +139,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           TextStyle(color: Colors.grey.shade600, fontSize: 16),
                     ),
                   )
-                : SingleChildScrollView(
-                  child: Column(
+                : Column(
                       children: [
                         Expanded(
                           child: ListView.builder(
@@ -170,8 +169,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             children: [
                               Expanded(
                                 child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade100,
                                     borderRadius: BorderRadius.circular(24),
@@ -190,8 +189,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                               CircleAvatar(
                                 backgroundColor: _orangeColor,
                                 child: IconButton(
-                                  icon:
-                                      const Icon(Icons.send, color: Colors.white),
+                                  icon: const Icon(Icons.send,
+                                      color: Colors.white),
                                   onPressed: _sendMessage,
                                 ),
                               ),
@@ -199,8 +198,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           ),
                         ),
                       ],
-                    ),
-                ));
+                    )
+                  );
   }
 }
 
