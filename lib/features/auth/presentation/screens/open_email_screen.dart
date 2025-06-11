@@ -10,7 +10,15 @@ class OpenEmailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 27, 126, 207),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF0A6FBA)),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -18,159 +26,127 @@ class OpenEmailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.network(
-                'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/telegram-white-icon.png',
-                height: 80,
-                width: 80,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.telegram, size: 80, color: Colors.white),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const CircularProgressIndicator(color: Colors.white);
-                },
-              ),
-              const SizedBox(height: 23),
+              const SizedBox(height: 40),
+              Icon(Icons.email_outlined, size: 84, color: Color(0xFF0A6FBA)),
+              const SizedBox(height: 20),
               const Text(
                 'Check Your Email',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Color(0xFF0A6FBA),
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              const Text(
+              Text(
                 'To confirm your email address tap the button in the email we sent to',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w100,
-                ),
+                style: TextStyle(fontSize: 16, color: Color(0xFF0A6FBA)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                FirebaseAuth.instance.currentUser?.email ?? "In your email",
+                FirebaseAuth.instance.currentUser?.email ?? email,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  decoration: TextDecoration.underline,
+                  color: Color(0xFF0A6FBA),
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 180,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 12, 43, 68),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1),
-                        ),
+
+              Center(
+                child: SizedBox(
+                  width: 150, // Adjust width as needed for your text
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF0A6FBA),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      onPressed: () async {
-                        try {
-                          final user = FirebaseAuth.instance.currentUser;
+                    ),
+                    onPressed: () async {
+                      try {
+                        final user = FirebaseAuth.instance.currentUser;
 
-                          if (user == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'User not found. Please sign in again.')),
-                            );
-                            return;
-                          }
-
-                          if (user.emailVerified) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Your email is already verified.')),
-                            );
-                            return;
-                          }
-
-                          await user.sendEmailVerification();
-
-                          Navigator.pushReplacementNamed(context, '/verify');
-
-                          final Uri emailLaunchUri =
-                              Uri(scheme: 'mailto', path: '');
-
-                          if (await canLaunchUrl(emailLaunchUri)) {
-                            await launchUrl(emailLaunchUri);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Could not open your email app.')),
-                            );
-                          }
-                        } on FirebaseAuthException catch (e) {
-                          String message;
-
-                          switch (e.code) {
-                            case 'too-many-requests':
-                              message =
-                                  'Too many attempts. Please try again later.';
-                              break;
-                            case 'user-disabled':
-                              message = 'This account has been disabled.';
-                              break;
-                            case 'user-not-found':
-                              message = 'User does not exist.';
-                              break;
-                            default:
-                              message = 'Authentication error: ${e.message}';
-                          }
-
+                        if (user == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(message)),
+                            const SnackBar(
+                              content: Text(
+                                'User not found. Please sign in again.',
+                              ),
+                            ),
                           );
-                        } catch (e) {
+                          return;
+                        }
+
+                        if (user.emailVerified) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Unexpected error: ${e.toString()}')),
+                            const SnackBar(
+                              content: Text('Your email is already verified.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        await user.sendEmailVerification();
+
+                        Navigator.pushReplacementNamed(context, '/verify');
+
+                        final Uri emailLaunchUri = Uri(
+                          scheme: 'mailto',
+                          path: '',
+                        );
+
+                        if (await canLaunchUrl(emailLaunchUri)) {
+                          await launchUrl(emailLaunchUri);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Could not open your email app.'),
+                            ),
                           );
                         }
-                      },
-                      child: const Text(
-                        'Open Email App',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      } on FirebaseAuthException catch (e) {
+                        String message;
+
+                        switch (e.code) {
+                          case 'too-many-requests':
+                            message =
+                                'Too many attempts. Please try again later.';
+                            break;
+                          case 'user-disabled':
+                            message = 'This account has been disabled.';
+                            break;
+                          case 'user-not-found':
+                            message = 'User does not exist.';
+                            break;
+                          default:
+                            message = 'Authentication error: ${e.message}';
+                        }
+
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(message)));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Unexpected error: ${e.toString()}'),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      'Open email app',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-                child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(color: Colors.white),
-                    children: [
-                      TextSpan(text: 'Already have an account?\n'),
-                      TextSpan(
-                        text: 'Use Password to sign in',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 235, 57, 226),
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ],
