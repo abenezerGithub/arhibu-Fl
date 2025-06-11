@@ -111,11 +111,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          leading: Image.asset(
-            'images/Logowhite.png',
-            width: 50,
-            height: 50,
-            color: const Color.fromARGB(255, 10, 89, 224),
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+            child: Image.asset(
+              'images/Logowhite.png',
+              width: 50,
+              height: 50,
+              color: const Color.fromARGB(255, 10, 89, 224),
+            ),
           ),
           automaticallyImplyLeading: false,
           actions: [
@@ -207,6 +210,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Image.asset(
+                                        'images/facebook.png',
+                                        width: 38,
+                                        height: 38,
+                                      ),
+                                      onPressed: () => _launchURL(
+                                          'https://facebook.com/yourprofile'),
+                                    ),
+                                    IconButton(
+                                      icon: Image.asset(
+                                        'images/insta.jpeg',
+                                        width: 38,
+                                        height: 38,
+                                      ),
+                                      onPressed: () => _launchURL(
+                                          'https://instagram.com/yourprofile'),
+                                    ),
+                                    IconButton(
+                                      icon: Image.asset(
+                                        'images/linkedin.png',
+                                        width: 38,
+                                        height: 38,
+                                      ),
+                                      onPressed: () => _launchURL(
+                                        'https://linkedin.com/in/yourprofile',
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Image.asset(
+                                        'images/x.png',
+                                        width: 27,
+                                        height: 27,
+                                      ),
+                                      onPressed: () => _launchURL(
+                                          'https://twitter.com/yourprofile'),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
@@ -304,8 +349,193 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ],
                                 ),
                               )
-                            : Center(
-                                child: Text(fullUserDataFromServer.toString(),))
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'User Profile Detailed information',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.email,
+                                                color: Colors.blue,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Email:',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            fullUserDataFromServer['email'] ??
+                                                'N/A',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.phone,
+                                                color: Colors.green,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Phone Number:',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            fullUserDataFromServer[
+                                                    'phoneNumber'] ??
+                                                'N/A',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.person,
+                                                color: Colors.orange,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Display Name:',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            fullUserDataFromServer[
+                                                    'displayName'] ??
+                                                'N/A',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.account_circle,
+                                                color: Colors.purple,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Full Name:',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            fullUserDataFromServer['profile']
+                                                    ?['fullname'] ??
+                                                'N/A',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                   ],
                 ),
               );

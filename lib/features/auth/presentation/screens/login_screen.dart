@@ -1,5 +1,6 @@
 import 'package:arhibu/core/theme/app_theme.dart';
 import 'package:arhibu/features/auth/presentation/widgets/google_sso.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,7 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is LoginSuccess) {
             setState(() => _isLoading = false);
-            Navigator.pushReplacementNamed(context, '/profile');
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null && user.emailVerified) {
+              Navigator.pushReplacementNamed(context, '/profile');
+            } else {
+              Navigator.pushNamed(context, '/openemail');
+            }
           } else if (state is LoginFailure) {
             setState(() => _isLoading = false);
             ScaffoldMessenger.of(

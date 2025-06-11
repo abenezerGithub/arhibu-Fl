@@ -5,7 +5,7 @@ class MainNavigation extends StatefulWidget {
   final int initialIndex;
 
   const MainNavigation({Key? key, required this.child, this.initialIndex = 0})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -30,10 +30,10 @@ class _MainNavigationState extends State<MainNavigation> {
       case 1:
         Navigator.pushReplacementNamed(context, '/chat');
         break;
-      // case 2:
-      //   Navigator.pushReplacementNamed(context, '/notifications');
-      //   break;
       case 2:
+        Navigator.pushReplacementNamed(context, '/notifications');
+        break;
+      case 3:
         Navigator.pushReplacementNamed(context, '/profile');
         break;
     }
@@ -53,12 +53,10 @@ class _MainNavigationState extends State<MainNavigation> {
             icon: Icon(Icons.chat_bubble_outline),
             label: 'Chat',
           ),
-          
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.notifications_outlined),
-          //   label: 'Notifications',
-          // ),
-
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            label: 'Notifications',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         selectedItemColor: Theme.of(context).primaryColor,

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,16 +22,14 @@ class OpenEmailScreen extends StatelessWidget {
                 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/telegram-white-icon.png',
                 height: 80,
                 width: 80,
-                errorBuilder:
-                    (context, error, stackTrace) =>
-                        Icon(Icons.telegram, size: 80, color: Colors.white),
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.telegram, size: 80, color: Colors.white),
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return const CircularProgressIndicator(color: Colors.white);
                 },
               ),
               const SizedBox(height: 23),
-
               const Text(
                 'Check Your Email',
                 style: TextStyle(
@@ -52,7 +51,7 @@ class OpenEmailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                email,
+                FirebaseAuth.instance.currentUser?.email ?? "In your email",
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -62,7 +61,6 @@ class OpenEmailScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -78,19 +76,69 @@ class OpenEmailScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        Navigator.pushReplacementNamed(context, '/verify');
+                        try {
+                          final user = FirebaseAuth.instance.currentUser;
 
-                        final Uri emailLaunchUri = Uri(
-                          scheme: 'mailto',
-                          path: '',
-                        );
-                        if (await canLaunchUrl(emailLaunchUri)) {
-                          await launchUrl(emailLaunchUri);
-                        } else {
+                          if (user == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'User not found. Please sign in again.')),
+                            );
+                            return;
+                          }
+
+                          if (user.emailVerified) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Your email is already verified.')),
+                            );
+                            return;
+                          }
+
+                          await user.sendEmailVerification();
+
+                          Navigator.pushReplacementNamed(context, '/verify');
+
+                          final Uri emailLaunchUri =
+                              Uri(scheme: 'mailto', path: '');
+
+                          if (await canLaunchUrl(emailLaunchUri)) {
+                            await launchUrl(emailLaunchUri);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Could not open your email app.')),
+                            );
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          String message;
+
+                          switch (e.code) {
+                            case 'too-many-requests':
+                              message =
+                                  'Too many attempts. Please try again later.';
+                              break;
+                            case 'user-disabled':
+                              message = 'This account has been disabled.';
+                              break;
+                            case 'user-not-found':
+                              message = 'User does not exist.';
+                              break;
+                            default:
+                              message = 'Authentication error: ${e.message}';
+                          }
+
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open email app.'),
-                            ),
+                            SnackBar(content: Text(message)),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Unexpected error: ${e.toString()}')),
                           );
                         }
                       },
@@ -102,7 +150,6 @@ class OpenEmailScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 24),
               TextButton(
                 onPressed: () {

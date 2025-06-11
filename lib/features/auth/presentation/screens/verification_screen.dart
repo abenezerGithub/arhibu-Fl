@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
@@ -75,7 +76,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   children: [
                     const TextSpan(text: 'we have sent an email to\n'),
                     TextSpan(
-                      text: widget.email,
+                      text: FirebaseAuth.instance.currentUser?.email ?? "Your email",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
@@ -83,54 +84,57 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                     const TextSpan(text: ' containing\n'),
                     const TextSpan(
-                      text: 'a 6 digit code which expire in 15 minutes\n',
+                      text: 'a link to verify your account. \n',
                     ),
-                    const TextSpan(text: 'please enter the code in below.'),
+                    const TextSpan(
+                        text:
+                            'If you follow the step in the email press the button below.'),
                   ],
                 ),
               ),
               const SizedBox(height: 40),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(6, (index) {
-                  return SizedBox(
-                    width: 45,
-                    child: TextField(
-                      controller: _codeControllers[index],
-                      focusNode: _focusNodes[index],
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w100,
-                      ),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.2),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value.length == 1 && index < 5) {
-                          FocusScope.of(
-                            context,
-                          ).requestFocus(_focusNodes[index + 1]);
-                        } else if (value.isEmpty && index > 0) {
-                          FocusScope.of(
-                            context,
-                          ).requestFocus(_focusNodes[index - 1]);
-                        }
-                      },
-                    ),
-                  );
-                }),
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: List.generate(6, (index) {
+              //     return SizedBox(
+              //       width: 45,
+              //       child: TextField(
+              //         controller: _codeControllers[index],
+              //         focusNode: _focusNodes[index],
+              //         textAlign: TextAlign.center,
+              //         keyboardType: TextInputType.number,
+              //         maxLength: 1,
+              //         style: const TextStyle(
+              //           color: Colors.white,
+              //           fontSize: 24,
+              //           fontWeight: FontWeight.w100,
+              //         ),
+              //         decoration: InputDecoration(
+              //           counterText: '',
+              //           filled: true,
+              //           fillColor: Colors.white.withOpacity(0.2),
+              //           border: OutlineInputBorder(
+              //             borderRadius: BorderRadius.circular(8),
+              //             borderSide: BorderSide.none,
+              //           ),
+              //         ),
+              //         onChanged: (value) {
+              //           if (value.length == 1 && index < 5) {
+              //             FocusScope.of(
+              //               context,
+              //             ).requestFocus(_focusNodes[index + 1]);
+              //           } else if (value.isEmpty && index > 0) {
+              //             FocusScope.of(
+              //               context,
+              //             ).requestFocus(_focusNodes[index - 1]);
+              //           }
+              //         },
+              //       ),
+              //     );
+              //   }),
+              // ),
+
               const SizedBox(height: 30),
 
               ElevatedButton(
@@ -142,8 +146,25 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
+                onPressed: () async {
+                  User? user = FirebaseAuth.instance.currentUser;
+
+                  if (user != null) {
+                    await user.reload(); // Refresh the user's data
+                    user = FirebaseAuth.instance.currentUser;
+
+                    if (user!.emailVerified) {
+                      // Email is verified, navigate to home page
+                      Navigator.pushNamed(context, '/');
+                    } else {
+                      // Email not verified, show message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'Please verify your email before continuing by following email link.')),
+                      );
+                    }
+                  }
                 },
                 child: const Text(
                   'Continue',

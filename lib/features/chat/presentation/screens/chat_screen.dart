@@ -117,12 +117,14 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SvgPicture.asset(
-            'images/Vector.svg',
-            color: Theme.of(context).primaryColor,
+            padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+            child: Image.asset(
+              'images/Logowhite.png',
+              width: 50,
+              height: 50,
+              color: const Color.fromARGB(255, 10, 89, 224),
+            ),
           ),
-        ),
         title: _isSearching
             ? TextField(
                 controller: _searchController,

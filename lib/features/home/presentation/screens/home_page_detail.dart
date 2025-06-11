@@ -21,7 +21,7 @@ class HomePageDetailScreen extends StatelessWidget {
               ListingBloc(context.read<GetListings>())..add(LoadListings()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Home Page", style: TextStyle(color: Colors.black)),
+          title: const Text("Listing Detail", style: TextStyle(color: Colors.black)),
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black),
           elevation: 1,

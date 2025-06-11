@@ -231,12 +231,16 @@ class _HomePageScreenState extends State<HomePageScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: SvgPicture.asset(
-          'images/Vector.svg',
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-          height: 24,
-          width: 24,
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+          child: Image.asset(
+            'images/Logowhite.png',
+            width: 50,
+            height: 50,
+            color: const Color.fromARGB(255, 10, 89, 224),
+          ),
         ),
+        backgroundColor: Colors.white,
         title: _showSearchBar
             ? TextField(
                 autofocus: true,
@@ -252,13 +256,18 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 onSubmitted: _onSearchSubmitted,
                 textInputAction: TextInputAction.search,
               )
-            : const Text("Roommates"),
+            : const Text(
+                "Roommates",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
         actions: [
           if (!_showSearchBar) ...[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(
-                icon: const Icon(Icons.search, size: 24),
+                icon: const Icon(Icons.search, size: 24, color: Colors.blue),
                 onPressed: () {
                   setState(() {
                     _showSearchBar = true;
@@ -269,7 +278,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: IconButton(
-                icon: const Icon(Icons.filter_list, size: 24),
+                icon:
+                    const Icon(Icons.filter_list, size: 24, color: Colors.blue),
                 onPressed: () {
                   Navigator.push(
                     context,
