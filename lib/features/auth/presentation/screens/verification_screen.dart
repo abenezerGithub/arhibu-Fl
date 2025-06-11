@@ -32,153 +32,169 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 21, 78, 124),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Logo
-              Center(child: Image.asset('images/Logowhite.png', height: 60)),
-              const SizedBox(height: 40),
-
-              // Title
-              const Text(
-                'We need to verify your email address',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  // fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
               const SizedBox(height: 20),
 
-              // Instruction text
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.black,
+                      size: 28,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    splashRadius: 24,
+                  ),
+                  const SizedBox(width: 13),
+                  const Text(
+                    'Verify Email',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 30),
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF0A6FBA),
                     fontSize: 16,
                     height: 1.5,
-                    fontWeight: FontWeight.w100,
                   ),
                   children: [
-                    const TextSpan(text: 'we have sent an email to\n'),
+                    const TextSpan(
+                      text: 'We need to verify your email address we\n',
+                      style: TextStyle(color: Color(0xFF0A6FBA)),
+                    ),
+                    const TextSpan(
+                      text: 'have sent an email to\n',
+                      style: TextStyle(color: Color(0xFF0A6FBA)),
+                    ),
                     TextSpan(
-                      text: FirebaseAuth.instance.currentUser?.email ?? "Your email",
+                      text: FirebaseAuth.instance.currentUser?.email ?? widget.email,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
+                        color: Color(0xFF0A6FBA),
                       ),
                     ),
-                    const TextSpan(text: ' containing\n'),
                     const TextSpan(
-                      text: 'a link to verify your account. \n',
+                      text: ' containing\n',
+                      style: TextStyle(color: Color(0xFF0A6FBA)),
                     ),
                     const TextSpan(
-                        text:
-                            'If you follow the step in the email press the button below.'),
+                      text: 'a 6 digit code which expire in 15 minutes\n',
+                      style: TextStyle(color: Color(0xFF0A6FBA)),
+                    ),
+                    const TextSpan(
+                      text: 'please enter the code in below.',
+                      style: TextStyle(color: Color(0xFF0A6FBA)),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 40),
 
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: List.generate(6, (index) {
-              //     return SizedBox(
-              //       width: 45,
-              //       child: TextField(
-              //         controller: _codeControllers[index],
-              //         focusNode: _focusNodes[index],
-              //         textAlign: TextAlign.center,
-              //         keyboardType: TextInputType.number,
-              //         maxLength: 1,
-              //         style: const TextStyle(
-              //           color: Colors.white,
-              //           fontSize: 24,
-              //           fontWeight: FontWeight.w100,
-              //         ),
-              //         decoration: InputDecoration(
-              //           counterText: '',
-              //           filled: true,
-              //           fillColor: Colors.white.withOpacity(0.2),
-              //           border: OutlineInputBorder(
-              //             borderRadius: BorderRadius.circular(8),
-              //             borderSide: BorderSide.none,
-              //           ),
-              //         ),
-              //         onChanged: (value) {
-              //           if (value.length == 1 && index < 5) {
-              //             FocusScope.of(
-              //               context,
-              //             ).requestFocus(_focusNodes[index + 1]);
-              //           } else if (value.isEmpty && index > 0) {
-              //             FocusScope.of(
-              //               context,
-              //             ).requestFocus(_focusNodes[index - 1]);
-              //           }
-              //         },
-              //       ),
-              //     );
-              //   }),
-              // ),
+              // Code input fields
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(6, (index) {
+                  return SizedBox(
+                    width: 45,
+                    child: TextField(
+                      controller: _codeControllers[index],
+                      focusNode: _focusNodes[index],
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      maxLength: 1,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: InputDecoration(
+                        counterText: '',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFF0A6FBA),
+                            width: 2,
+                          ),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue, width: 2),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        if (value.length == 1 && index < 5) {
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index + 1]);
+                        } else if (value.isEmpty && index > 0) {
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index - 1]);
+                        }
+                      },
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 50),
 
-              const SizedBox(height: 30),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF0A6FBA),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                onPressed: () async {
-                  User? user = FirebaseAuth.instance.currentUser;
+                  onPressed: () async {
+                    User? user = FirebaseAuth.instance.currentUser;
 
-                  if (user != null) {
-                    await user.reload(); // Refresh the user's data
-                    user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      await user.reload(); // Refresh the user's data
+                      user = FirebaseAuth.instance.currentUser;
 
-                    if (user!.emailVerified) {
-                      // Email is verified, navigate to home page
-                      Navigator.pushNamed(context, '/');
-                    } else {
-                      // Email not verified, show message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                'Please verify your email before continuing by following email link.')),
-                      );
+                      if (user!.emailVerified) {
+                        // Email is verified, navigate to home page
+                        Navigator.pushNamed(context, '/');
+                      } else {
+                        // Email not verified, show message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Please verify your email before continuing by following email link.')),
+                        );
+                      }
                     }
-                  }
-                },
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  },
+                  child: const Text(
+                    'Continue',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Resend Email Text
               Center(
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: const TextSpan(
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.black, fontSize: 14),
                     children: [
                       TextSpan(
                         text:
@@ -188,6 +204,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       TextSpan(
                         text: 'Resend',
                         style: TextStyle(
+                          color: Colors.blue,
                           decoration: TextDecoration.underline,
                           fontWeight: FontWeight.bold,
                         ),
