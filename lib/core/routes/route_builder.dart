@@ -62,7 +62,7 @@ class RouteBuilder {
       //       child: MainNavigation(initialIndex: 2, child: const AccountSetUp()),
       //     ),
       RouteNames.profile: (context) =>
-          MainNavigation(initialIndex: 2, child: const ProfileScreen()),
+          MainNavigation(initialIndex: 3, child: const ProfileScreen()),
 
       RouteNames.success: (context) => const SuccessConfirmationScreen(),
     };

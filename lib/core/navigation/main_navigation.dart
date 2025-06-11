@@ -5,7 +5,7 @@ class MainNavigation extends StatefulWidget {
   final int initialIndex;
 
   const MainNavigation({Key? key, required this.child, this.initialIndex = 0})
-      : super(key: key);
+    : super(key: key);
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -38,6 +38,7 @@ class _MainNavigationState extends State<MainNavigation> {
         break;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

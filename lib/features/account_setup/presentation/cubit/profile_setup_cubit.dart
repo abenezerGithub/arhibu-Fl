@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:arhibu/global_service/request_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
@@ -41,8 +42,7 @@ class ProfileSetupState {
 }
 
 class ProfileSetupCubit extends Cubit<ProfileSetupState> {
-  static const String _apiUrl =
-      'https://arhibu-be.onrender.com/api/user/profile';
+  static const String _apiUrl = '/user/profile';
   final http.Client _httpClient;
 
   ProfileSetupCubit({http.Client? httpClient})
@@ -91,14 +91,12 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
       return;
     }
 
-    // TODO:  to be integrated with backend after abeni fixed the fields
-    /*
     emit(state.copyWith(isLoading: true, errorMessage: null, isSuccess: false));
 
     try {
       final profile = state.formData['profile'] ?? {};
       final imagePath = profile['userPicture'] as String?;
-      
+
       if (imagePath == null || imagePath.isEmpty) {
         emit(
           state.copyWith(
@@ -126,29 +124,59 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
       apiData['userPicture'] = base64Image;
 
       print('Sending API data with base64 image');
-      final response = await _httpClient.post(
-        Uri.parse(_apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(apiData),
-      );
+      
+      // Use RequestConfig for proper authentication
+      final response = await RequestConfig.securePost(_apiUrl, apiData);
 
       print('API Response status: ${response.statusCode}');
       print('API Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        emit(
-          state.copyWith(
-            isSuccess: true,
-            isLoading: false,
-            isProfileComplete: true,
-          ),
-        );
+        try {
+          final responseData = jsonDecode(response.body);
+          if (_validateApiResponse(responseData)) {
+            emit(
+              state.copyWith(
+                isSuccess: true,
+                isLoading: false,
+                isProfileComplete: true,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                isLoading: false,
+                errorMessage: responseData['message'] ?? 'Profile update failed',
+                isSuccess: false,
+                isProfileComplete: false,
+              ),
+            );
+          }
+        } catch (e) {
+          print('Error parsing success response: $e');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Invalid response from server',
+              isSuccess: false,
+              isProfileComplete: false,
+            ),
+          );
+        }
       } else {
-        final errorData = jsonDecode(response.body);
+        String errorMessage = 'Failed to update profile';
+        try {
+          final errorData = jsonDecode(response.body);
+          errorMessage = errorData['message'] ?? errorMessage;
+        } catch (e) {
+          print('Error parsing error response: $e');
+          errorMessage = 'Server error: ${response.statusCode}';
+        }
+        
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: errorData['message'] ?? 'Failed to update profile',
+            errorMessage: errorMessage,
             isSuccess: false,
             isProfileComplete: false,
           ),
@@ -156,69 +184,85 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
       }
     } catch (e) {
       print('Error submitting profile: $e');
+      String errorMessage = 'Network error occurred';
+      
+      if (e.toString().contains('SocketException')) {
+        errorMessage = 'No internet connection. Please check your network.';
+      } else if (e.toString().contains('TimeoutException')) {
+        errorMessage = 'Request timed out. Please try again.';
+      } else {
+        errorMessage = 'Error: ${e.toString()}';
+      }
+      
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: 'Error: ${e.toString()}',
+          errorMessage: errorMessage,
           isSuccess: false,
           isProfileComplete: false,
         ),
       );
     }
-    */
-
-
-    emit(
-      state.copyWith(
-        isSuccess: true,
-        isLoading: false,
-        isProfileComplete: true,
-      ),
-    );
   }
 
   Map<String, dynamic> _transformFormDataToApiFormat() {
-
     final personalInfo = state.formData['personal_info'] ?? {};
     final location = state.formData['location'] ?? {};
     final lifestyle = state.formData['lifestyle'] ?? {};
     final profile = state.formData['profile'] ?? {};
     final roomPreferences = state.formData['room_preferences'] ?? {};
+    
     print('Profile data: $profile');
     print('Profile image path: ${profile['userPicture']}');
 
+    try {
+      return {
+        "fullname": personalInfo['full_name'] ?? '',
+        "userPicture": "",
+        "verificationDocs": [],
+        "website": "https://arhibu.com", //just dummy data
+        "age": int.tryParse(personalInfo['age']?.toString() ?? '') ?? 0,
+        "sex": personalInfo['gender'] ?? '',
+        "nationality": personalInfo['home_town'] ?? '',
+        "education": personalInfo['occupation'] ?? '',
+        "bio": roomPreferences['description'] ?? '',
+        "location":
+            "${location['city'] ?? ''}, ${(location['neighborhoods'] as List?)?.join(', ') ?? ''}",
 
-    return {
-      "fullname": personalInfo['full_name'] ?? '',
-      "userPicture":
-          "", 
-      "verificationDocs": [], 
-      "website": "https://arhibu.com", //just dummy data
-      "age": int.tryParse(personalInfo['age']?.toString() ?? '') ?? 0,
-      "sex": personalInfo['gender'] ?? '',
-      "nationality": personalInfo['home_town'] ?? '',
-      "education": personalInfo['occupation'] ?? '',
-      "bio": roomPreferences['description'] ?? '',
-      "location":
-          "${location['city'] ?? ''}, ${(location['neighborhoods'] as List?)?.join(', ') ?? ''}",
+        "state": personalInfo['state'] ?? '',
+        "relationship_status": personalInfo['relationship_status'] ?? '',
+        "cleanliness": lifestyle['cleanliness'] ?? '',
+        "work_hours": lifestyle['work_hours'] ?? '',
+        "sleep_hours": lifestyle['sleep_hours'] ?? '',
+        "tobacco_relationship": lifestyle['tobacco_relationship'] ?? '',
+        "alcohol_relationship": lifestyle['alcohol_relationship'] ?? '',
+        "room_city": roomPreferences['room_city'] ?? '',
+        "room_subcity": roomPreferences['room_subcity'] ?? '',
+        "bedrooms":
+            int.tryParse(roomPreferences['bedrooms']?.toString() ?? '') ?? 0,
+        "bathrooms":
+            int.tryParse(roomPreferences['bathrooms']?.toString() ?? '') ?? 0,
+        "furniture": roomPreferences['furniture'] ?? '',
+        "apartment_type": roomPreferences['apartment_type'] ?? '',
+        "amenities": roomPreferences['amenities'] ?? [],
+      };
+    } catch (e) {
+      print('Error transforming form data: $e');
+      throw Exception('Failed to prepare data for submission: $e');
+    }
+  }
 
-      "state": personalInfo['state'] ?? '',
-      "relationship_status": personalInfo['relationship_status'] ?? '',
-      "cleanliness": lifestyle['cleanliness'] ?? '',
-      "work_hours": lifestyle['work_hours'] ?? '',
-      "sleep_hours": lifestyle['sleep_hours'] ?? '',
-      "tobacco_relationship": lifestyle['tobacco_relationship'] ?? '',
-      "alcohol_relationship": lifestyle['alcohol_relationship'] ?? '',
-      "room_city": roomPreferences['room_city'] ?? '',
-      "room_subcity": roomPreferences['room_subcity'] ?? '',
-      "bedrooms":
-          int.tryParse(roomPreferences['bedrooms']?.toString() ?? '') ?? 0,
-      "bathrooms":
-          int.tryParse(roomPreferences['bathrooms']?.toString() ?? '') ?? 0,
-      "furniture": roomPreferences['furniture'] ?? '',
-      "apartment_type": roomPreferences['apartment_type'] ?? '',
-      "amenities": roomPreferences['amenities'] ?? [],
-    };
+  bool _validateApiResponse(Map<String, dynamic> response) {
+    // Add validation for expected response format
+    if (response.containsKey('success') && response['success'] == false) {
+      return false;
+    }
+    
+    if (response.containsKey('error')) {
+      return false;
+    }
+    
+    return true;
   }
 
   bool _isFormComplete() {
@@ -227,7 +271,6 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
     final lifestyle = state.formData['lifestyle'] ?? {};
     final profile = state.formData['profile'] ?? {};
     final roomPreferences = state.formData['room_preferences'] ?? {};
-
 
     print('Checking form completion:');
     print('Personal Info: $personalInfo');
